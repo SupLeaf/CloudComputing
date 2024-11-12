@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Umfrage</h1>
+    <form action="/submit-survey" method="post">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name"><br><br>
+
+        <label for="age">Alter:</label><br>
+        <input type="number" id="age" name="age"><br><br>
+
+        <label for="gender">Geschlecht:</label><br>
+        <input type="radio" id="male" name="gender" value="male">
+        <label for="male">Männlich</label><br>
+        <input type="radio" id="female" name="gender" value="female">
+        <label for="female">Weiblich</label><br>
+        <input type="radio" id="other" name="gender" value="other">
+        <label for="other">Andere</label><br><br>
+
+        <label for="feedback">Feedback:</label><br>
+        <textarea id="feedback" name="feedback" rows="4" cols="50"></textarea><br><br>
+
+        <input type="submit" value="Absenden">
+    </form>
+</body>
+</html>

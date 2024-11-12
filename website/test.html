@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Umfrage</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #333;
+        padding: 10px 20px;
+    }
+    .header img {
+        height: 50px;
+    }
+    .nav {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    .nav li {
+        margin-left: 20px;
+    }
+    .nav a {
+        color: white;
+        text-decoration: none;
+        padding: 10px 15px;
+        display: block;
+    }
+    .nav a:hover {
+        background-color: #575757;
+    }
+
+    .result {
+        margin-top: 20px;
+        font-size: 20px;
+        color: green;
+    }
+
+    #fragen {
+        margin: center;
+        color: blue;
+        padding: 10px 15px;
+    }
+
+    .button {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+
+    .button:hover {
+        background-color: #45a049;
+    }
+
+</style>
+<body>
+
+
+    <header class="header">
+        <img src="logo.png" alt="Logo">
+        <nav>
+            <ul class="nav">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <h1>Umfrage</h1>
+    <form action="/submit" method="post">
+        <!-- action="/submit"  -->
+        <!-- Hier muss noch die Frage hin  -->
+
+        <div id="fragen">
+            <button type="button" class="button" onclick="showResult('Antwortmöglichkeit 1 gewählt')">Antwortmöglichkeit 1</button><br>
+            <button type="button" class="button" onclick="showResult('Antwortmöglichkeit 2 gewählt')">Antwortmöglichkeit 2</button><br>
+            <button type="button" class="button" onclick="showResult('Antwortmöglichkeit 3 gewählt')">Antwortmöglichkeit 3</button><br>
+            <button type="button" class="button" onclick="showResult('Antwortmöglichkeit 4 gewählt')">Antwortmöglichkeit 4</button><br><br>
+        </div>
+
+        <div class="result" id="result"></div>
+    </form>
+
+    <script>
+        function showResult(message) {
+            document.getElementById('result').innerText = message;
+        }
+    </script>
+</body>
+</html>
