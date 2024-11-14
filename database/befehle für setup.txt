@@ -1,0 +1,92 @@
+mysql -h cloudc3-db-01.cbkqay8ikicq.eu-central-1.rds.amazonaws.com -P 3306 -u admin -p
+
+
+
+CREATE TABLE Benutzer (
+    UserID INT PRIMARY KEY AUTO_INCREMENT,
+    Vorname VARCHAR(50) NOT NULL,
+    Nachname VARCHAR(50) NOT NULL,
+    EMail VARCHAR(100) UNIQUE NOT NULL,
+    PasswortHash VARCHAR(255) NOT NULL,
+    Registrierungsdatum DATE NOT NULL,
+    LetzterLogin DATE,
+    Rolle ENUM('Admin', 'Benutzer') NOT NULL
+);
+
+CREATE TABLE Umfrage (
+    SurveyID INT PRIMARY KEY AUTO_INCREMENT,
+    Titel VARCHAR(255) NOT NULL,
+    Beschreibung TEXT,
+    Erstellungsdatum DATE NOT NULL,
+    Startdatum DATE,
+    Enddatum DATE,
+    Status ENUM('Aktiv', 'Inaktiv', 'Abgeschlossen') NOT NULL,
+    UserID INT,
+    FOREIGN KEY (UserID) REFERENCES Benutzer(UserID)
+);
+
+CREATE TABLE Frage (
+    QuestionID INT PRIMARY KEY AUTO_INCREMENT,
+    Fragetext TEXT NOT NULL,
+    Fragetyp ENUM('MultipleChoice', 'SingleChoice', 'Text') NOT NULL,
+    Reihenfolge INT NOT NULL,
+    SurveyID INT,
+    FOREIGN KEY (SurveyID) REFERENCES Umfrage(SurveyID)
+);
+
+CREATE TABLE Antwortoption (
+    OptionID INT PRIMARY KEY AUTO_INCREMENT,
+    Optionstext TEXT NOT NULL,
+    Reihenfolge INT NOT NULL,
+    QuestionID INT,
+    FOREIGN KEY (QuestionID) REFERENCES Frage(QuestionID)
+);
+
+CREATE TABLE Antwort (
+    ResponseID INT PRIMARY KEY AUTO_INCREMENT,
+    Antwortdatum DATE NOT NULL,
+    SurveyID INT,
+    UserID INT,
+    FOREIGN KEY (SurveyID) REFERENCES Umfrage(SurveyID),
+    FOREIGN KEY (UserID) REFERENCES Benutzer(UserID)
+);
+
+CREATE TABLE Antwortdetail (
+    ResponseDetailID INT PRIMARY KEY AUTO_INCREMENT,
+    ResponseID INT,
+    QuestionID INT,
+    OptionID INT,
+    Freitextantwort TEXT,
+    FOREIGN KEY (ResponseID) REFERENCES Antwort(ResponseID),
+    FOREIGN KEY (QuestionID) REFERENCES Frage(QuestionID),
+    FOREIGN KEY (OptionID) REFERENCES Antwortoption(OptionID)
+);
+
+
+
+
+
+INSERT INTO Benutzer (Vorname, Nachname, EMail, PasswortHash, Registrierungsdatum, LetzterLogin, Rolle)
+VALUES ('Max', 'Mustermann', 'max.mustermann@example.com', 'password', '2024-11-01', '2024-11-10', 'Admin');
+
+INSERT INTO Benutzer (Vorname, Nachname, EMail, PasswortHash, Registrierungsdatum, LetzterLogin, Rolle)
+VALUES ('Test', 'User', 'test.user@example.com', 'password', '2024-11-01', '2024-11-10', 'Benutzer');
+
+INSERT INTO Umfrage (Titel, Beschreibung, Erstellungsdatum, Startdatum, Enddatum, Status, UserID)
+VALUES ('Beispiel Umfrage', 'Dies ist eine Testumfrage', '2024-11-10', '2024-11-15', '2024-11-30', 'Aktiv', 1);
+
+INSERT INTO Frage (Fragetext, Fragetyp, Reihenfolge, SurveyID)
+VALUES ('Welche Anwort ist richtig?', 'SingleChoice', 1, 1);
+
+INSERT INTO Antwortoption (Optionstext, Reihenfolge, QuestionID)
+VALUES ('A', 1, 1),
+       ('B', 2, 1),
+       ('C', 3, 1),
+       ('D', 4, 1);
+
+INSERT INTO Antwort (Antwortdatum, SurveyID, UserID)
+VALUES ('2024-11-14', 1, 2);
+
+INSERT INTO Antwortdetail (ResponseID, QuestionID, OptionID)
+VALUES (1, 1, 2);  -- Der Benutzer hat "B" ausgewählt
+
