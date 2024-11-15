@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Umfrage</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <style>
     body {
@@ -20,6 +21,12 @@
     }
     .header img {
         height: 50px;
+    }
+
+    h1{
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     .nav {
         display: flex;
@@ -41,12 +48,18 @@
     }
 
     .result {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         margin-top: 20px;
         font-size: 20px;
         color: green;
     }
 
     #fragen {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         margin: center;
         color: blue;
         padding: 10px 15px;
@@ -98,6 +111,15 @@
 
         <div class="result" id="result"></div>
     </form>
+    <div class="bubbles">
+        <span class="one"></span>
+        <span class="two"></span>
+        <span class="three"></span>
+        <span class="four"></span>
+        <span class="five"></span>
+        <span class="six"></span>
+        <span class="seven"></span>
+    </div>
 
     <script>
         function showResult(message) {
