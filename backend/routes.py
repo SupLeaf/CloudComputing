@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from models import db, Umfrage, Frage, Antwort, Antwortdetail
+from models import db, Umfrage, Frage, Antwort, Antwortoption
 from schemas import UmfrageSchema, FrageSchema
 
 routes = Blueprint("routes", __name__)
@@ -9,6 +9,7 @@ def get_umfragen():
     umfragen = Umfrage.query.all()
     umfrage_schema = UmfrageSchema(many=True)
     return jsonify(umfrage_schema.dump(umfragen))
+
 
 @routes.route('/fragen/<int:survey_id>', methods=['GET'])
 def get_fragen(survey_id):
@@ -22,19 +23,29 @@ def post_antwort():
     antwort = Antwort(
         Antwortdatum=data['Antwortdatum'],
         SurveyID=data['SurveyID'],
-        UserID=data.get('UserID')
+        UserID=data.get('UserID'),
+        details=data['details']  # Store details directly in Antwort
     )
     db.session.add(antwort)
     db.session.commit()
-
-    for detail in data['details']:
-        antwortdetail = Antwortdetail(
-            ResponseID=antwort.ResponseID,
-            QuestionID=detail['QuestionID'],
-            OptionID=detail.get('OptionID'),
-            Freitextantwort=detail.get('Freitextantwort')
-        )
-        db.session.add(antwortdetail)
-
-    db.session.commit()
     return jsonify({"message": "Antwort gespeichert!"}), 201
+
+@routes.route('/antwortdetails/<int:response_id>', methods=['GET'])
+def get_antwortdetails(response_id):
+    antwort = Antwort.query.filter_by(ResponseID=response_id).first()
+    result = []
+    if antwort:
+        for detail in antwort.details:
+            option = Antwortoption.query.filter_by(OptionID=detail.get('OptionID')).first()
+            frage = Frage.query.filter_by(QuestionID=detail['QuestionID']).first()
+            entry = {}
+            if frage and frage.Fragetext:
+                entry['Fragetext'] = frage.Fragetext
+            if option and option.Optionstext:
+                entry['Optionstext'] = option.Optionstext
+            if detail.get('Freitextantwort'):
+                entry['Freitextantwort'] = detail['Freitextantwort']
+            if entry:
+                result.append(entry)
+    return jsonify(result)
+

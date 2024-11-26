@@ -1,5 +1,5 @@
 from flask_marshmallow import Marshmallow
-from models import Benutzer, Umfrage, Frage, Antwortoption, Antwort, Antwortdetail
+from models import Benutzer, Umfrage, Frage, Antwortoption, Antwort
 
 ma = Marshmallow()
 
@@ -23,6 +23,3 @@ class AntwortSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Antwort
 
-class AntwortdetailSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Antwortdetail

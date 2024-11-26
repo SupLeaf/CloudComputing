@@ -30,7 +30,6 @@ class Frage(db.Model):
     __tablename__ = 'frage'
     QuestionID = db.Column(db.Integer, primary_key=True)
     Fragetext = db.Column(db.Text)
-    Fragetyp = db.Column(db.String(20))
     Reihenfolge = db.Column(db.Integer)
     SurveyID = db.Column(db.Integer, db.ForeignKey('umfrage.SurveyID'))
 
@@ -49,13 +48,6 @@ class Antwort(db.Model):
     Antwortdatum = db.Column(db.DateTime)
     SurveyID = db.Column(db.Integer, db.ForeignKey('umfrage.SurveyID'))
     UserID = db.Column(db.Integer, db.ForeignKey('benutzer.UserID'))
-
-    details = db.relationship("Antwortdetail", backref="antwort", lazy=True)
-
-class Antwortdetail(db.Model):
-    __tablename__ = 'antwortdetail'
-    ResponseDetailID = db.Column(db.Integer, primary_key=True)
-    ResponseID = db.Column(db.Integer, db.ForeignKey('antwort.ResponseID'))
     QuestionID = db.Column(db.Integer, db.ForeignKey('frage.QuestionID'))
     OptionID = db.Column(db.Integer, db.ForeignKey('antwortoption.OptionID'), nullable=True)
-    Freitextantwort = db.Column(db.Text, nullable=True)
+
