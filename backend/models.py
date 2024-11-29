@@ -30,7 +30,7 @@ class Frage(db.Model):
     __tablename__ = 'frage'
     QuestionID = db.Column(db.Integer, primary_key=True)
     Fragetext = db.Column(db.Text)
-    Reihenfolge = db.Column(db.Integer)
+    Reihenfolge = db.Column(db.Integer, nullable=True)
     SurveyID = db.Column(db.Integer, db.ForeignKey('umfrage.SurveyID'))
 
     antwortoptionen = db.relationship("Antwortoption", backref="frage", lazy=True)
@@ -39,7 +39,7 @@ class Antwortoption(db.Model):
     __tablename__ = 'antwortoption'
     OptionID = db.Column(db.Integer, primary_key=True)
     Optionstext = db.Column(db.String(255))
-    Reihenfolge = db.Column(db.Integer)
+    Reihenfolge = db.Column(db.Integer, nullable=True)
     QuestionID = db.Column(db.Integer, db.ForeignKey('frage.QuestionID'))
 
 class Antwort(db.Model):

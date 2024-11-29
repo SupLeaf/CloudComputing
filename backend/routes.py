@@ -2,17 +2,20 @@ from flask import Blueprint, jsonify, request
 from models import db, Umfrage, Frage, Antwort, Antwortoption
 from schemas import UmfrageSchema, FrageSchema
 from datetime import datetime
+import random
 
 routes = Blueprint("routes", __name__)
 
-@routes.route('/umfragen', methods=['GET'])                 #Gibt eine Liste der Umfragen und ihrer SurveyID's zurück
+#Gibt eine Liste der Umfragen und ihrer SurveyID's zurück
+@routes.route('/umfragen', methods=['GET'])                 
 def get_umfragen():
     umfragen = Umfrage.query.all()
     umfrage_schema = UmfrageSchema(many=True)
     return jsonify(umfrage_schema.dump(umfragen))
 
 
-@routes.route('/fragen/<int:survey_id>', methods=['GET'])   #Gibt eine Frage und ihre Antwortmöglichkeiten zurück
+#Gibt eine Frage und ihre Antwortmöglichkeiten zurück
+@routes.route('/fragen/<int:survey_id>', methods=['GET'])   
 def get_fragen(survey_id):
     fragen = Frage.query.filter_by(SurveyID=survey_id).all()
     result = []
@@ -49,3 +52,99 @@ def post_antwort():
     db.session.commit()
 
     return jsonify({"message": "Antwort gespeichert!"}), 201
+
+
+#Fragt die Datenbank nach einer neuen uniquen SurveyID
+#ACHTUNG: Reserviert noch kein Objekt in der Datenbank, da dafür ganze Umfrage angelegt werden muss
+@routes.route('/getNewSurveyID', methods=['GET'])           
+def get_new_SurveyID():
+    def generate_unique_survey_id():
+        while True:
+            new_id = random.randint(1000, 9999)
+            if not Umfrage.query.filter_by(SurveyID=new_id).first():
+                return new_id
+
+    new_survey_id = generate_unique_survey_id()
+    return jsonify({"new_survey_id": new_survey_id})
+
+
+
+
+
+
+# POST-Route zum Erstellen einer neuen Umfrage durch den Admin
+
+@routes.route('/neueUmfrage', methods=['POST'])
+def create_new_Survey():
+    data = request.json
+    survey = Umfrage(
+        SurveyID=data['SurveyID'],
+        Titel=data['Titel'],
+        Beschreibung=data['Beschreibung'],
+        Erstellungsdatum=datetime.now(),
+        Startdatum=data['Startdatum'],
+        Enddatum=data['Enddatum'],
+        Status=data['Status'],
+        UserID=data['UserID']
+    )
+    db.session.add(survey)
+    db.session.commit()
+
+    for frage_data in data['Fragen']:
+        max_question_id = db.session.query(db.func.max(Frage.QuestionID)).scalar()
+        frage = Frage(
+            QuestionID=(max_question_id + 1) if max_question_id is not None else 1,
+            Fragetext=frage_data['Fragetext'],
+            Reihenfolge=frage_data.get('Reihenfolge', None),
+            SurveyID=survey.SurveyID
+        )
+        db.session.add(frage)
+        db.session.commit()
+
+        for antwortoption_data in frage_data['Antwortoptionen']:
+            max_option_id = db.session.query(db.func.max(Antwortoption.OptionID)).scalar()
+            antwortoption = Antwortoption(
+                OptionID=(max_option_id + 1) if max_option_id is not None else 1,
+                Optionstext=antwortoption_data['Optionstext'],
+                Reihenfolge=antwortoption_data.get('Reihenfolge', None),
+                QuestionID=frage.QuestionID
+            )
+            db.session.add(antwortoption)
+    db.session.commit()
+
+    return jsonify({"message": "Umfrage und Fragen erfolgreich erstellt!"}), 201
+# Beispiel Anfrage in JSON:
+# {
+#     "SurveyID": 1,
+#     "Titel": "Lieblingsfarbe Umfrage",
+#     "Beschreibung": "Eine Umfrage über Lieblingsfarben",
+#     "Startdatum": "2024-11-28T00:00:00",
+#     "Enddatum": "2024-12-28T00:00:00",
+#     "Status": "active",
+#     "UserID": 1,
+#     "Fragen": [
+#         {
+#             "QuestionID": 1,
+#             "Fragetext": "Was ist deine Lieblingsfarbe?",
+#             "Reihenfolge": 1,
+#             "Antwortoptionen": [
+#                 {
+#                     "Optionstext": "Blau",
+#                     "Reihenfolge": 1
+#                 },
+#                 {
+#                     "Optionstext": "Gelb",
+#                     "Reihenfolge": 2
+#                 },
+#                 {
+#                     "Optionstext": "Rot",
+#                     "Reihenfolge": 3
+#                 },
+#                 {
+#                     "Optionstext": "Grün",
+#                     "Reihenfolge": 4
+#                 }
+#             ]
+#         }
+#     ]
+# }
