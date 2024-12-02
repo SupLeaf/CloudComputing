@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startseite</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Verdana, Geneva, Tahoma, sans-serif, sans-serif;
+            text-align: center;
+            background-color: #eff1c4;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            margin-top: 180px;
+            font-size: 25px;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        button {
+            width: 130px;
+            height: 130px;
+            margin: 30px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 80px;
+            padding: 20px 32px;
+            cursor: pointer;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        button:hover {
+            transform: scale(1.1);
+            background-color: #e82626;
+        }
+        
+          
+    </style>
+    <script>
+        function redirectTo(role) {
+            if (role === "user") {
+                window.location.href = "user-login.html"; // Seite für reguläre Benutzer
+            } else if (role === "admin") {
+                window.location.href = "admin-login.html"; // Seite für Administratoren
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Wählen Sie Ihre Rolle:</h1>
+    <div class="container">
+        <button onclick="redirectTo('user')"><b>USER</b></button>
+        <button onclick="redirectTo('admin')"><b>ADMIN</b></button>
+    </div>
+</body>
+</html>
+
+

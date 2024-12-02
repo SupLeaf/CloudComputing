@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startseite</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            text-align: center;
+            background-color: #eff1c4;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            margin-top: 180px;
+            font-size: 25px;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        button {
+            width: 130px;
+            height: 130px;
+            margin: 30px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 80px;
+            padding: 20px 32px;
+            cursor: pointer;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        button:hover {
+            transform: scale(1.1);
+            background-color: #e82626;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Wählen Sie Ihre Rolle:</h1>
+    <div class="container">
+        <button onclick="loadHeaderAndRedirect('user')"><b>USER</b></button>
+        <button onclick="redirectTo('admin')"><b>ADMIN</b></button>
+    </div>
+
+    <script>
+        function redirectTo(role) {
+            if (role === "admin") {
+                window.location.href = "indexAdmin.html"; // Seite für Fragesteller
+            }
+        }
+
+        function loadHeaderAndRedirect(role) {
+            if (role === "user") {   // Seite Für den User (erstmalig)
+                fetch('indexUser.html')
+                    .then(response => response.text())
+                    .then(html => {
+                        setTimeout(() => {
+                            window.location.href = "indexUser.html";
+                        }, null); // Optionale Verzögerung vor Weiterleitung
+                    })
+                    .catch(err => console.error('Fehler beim Laden der Seite:', err));
+            }
+        }
+    </script>
+</body>
+</html>

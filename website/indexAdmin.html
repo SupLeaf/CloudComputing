@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fragesteller oder so</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #333;
+            padding: 10px 20px;
+        }
+        .header img {
+            height: 50px;
+        }
+        .nav {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .nav li {
+            margin-left: 20px;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+        }
+        .nav a:hover {
+            background-color: #575757;
+        }
+
+        #interface0{
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            margin: center;
+            color: blue;
+            padding: 100px 50px;
+        }
+
+        #answer{
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html">
+            <img src="logo.png" alt="Logo">
+        </a>
+        <nav>   <!-- Header home funktoniert (contact muss noch gefragt werden)-->
+            <ul class="nav">
+                <li><a href="index.html" onclick="changeDoc()">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <form id="anfrageStellenHoffentlich" method="post">
+        <div id="interface0">
+            <label for="question">Frage:</label><br>
+            <input type="text" id="question" name="question" required><br>
+            <input type="text" id="answer" name="answer1" required><br>
+            <input type="text" id="answer" name="answer2" required><br>
+            <input type="text" id="answer" name="answer3" required><br>
+            <input type="text" id="answer" name="answer4" required><br>
+            <input type="submit" value="Senden">
+
+        </div>
+    </form>
+
+    <script> 
+        document.getElementById('anfrageStellenHoffentlich').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        var question = document.getElementById('question').value;
+
+        fetch('10.0.2.16', { // http ip raussuchen und einfügen
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: question })
+        
+        }) 
+        .then(response => response.json()) 
+        .then(data => { document.getElementById('response').innerText = 'Antwort: ' + data.answer;
+     }) .catch(error => { console.error('Fehler:', error);
+      document.getElementById('response').innerText = 'Fehler beim Senden der Anfrage.';
+     }); 
+    });
+    </script>
+</body>
+</html>
