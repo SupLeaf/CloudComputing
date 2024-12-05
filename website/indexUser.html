@@ -190,7 +190,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const surveyID = getSurveyIDFromURL();
             if (surveyID) {
-                fetch(`http://127.0.0.1:80/fragen/${surveyID}`)
+                fetch(`/api/fragen/${surveyID}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.length > 0) {
