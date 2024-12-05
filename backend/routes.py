@@ -1,10 +1,12 @@
 from flask import Blueprint, jsonify, request
+from flask_cors import CORS
 from models import db, Umfrage, Frage, Antwort, Antwortoption
 from schemas import UmfrageSchema, FrageSchema
 from datetime import datetime
 import random
 
 routes = Blueprint("routes", __name__)
+CORS(routes)
 
 #Gibt eine Liste der Umfragen und ihrer SurveyID's zurück
 @routes.route('/umfragen', methods=['GET'])                 

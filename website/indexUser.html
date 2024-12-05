@@ -107,16 +107,16 @@
             </ul>
         </nav>
     </header>
-    <h1>Umfrage</h1>
+    <h1 id="frageText">Umfrage</h1>
     <form action="/submit" method="post">
         <!-- action="/submit"  -->
         <!-- Hier muss noch die Frage hin  -->
 
         <div id="fragen">
-            <button type="button" class="button" name="answer" onclick="selectAnswer('Antwortmöglichkeit 1')">Antwortmöglichkeit 1</button><br>
-            <button type="button" class="button" name="answer" onclick="selectAnswer('Antwortmöglichkeit 2')">Antwortmöglichkeit 2</button><br>
-            <button type="button" class="button" name="answer" onclick="selectAnswer('Antwortmöglichkeit 3')">Antwortmöglichkeit 3</button><br>
-            <button type="button" class="button" name="answer" onclick="selectAnswer('Antwortmöglichkeit 4')">Antwortmöglichkeit 4</button><br>
+            <button type="button" class="button" name="answer" id="option1" onclick="selectAnswer('')">Antwortmöglichkeit 1</button><br>
+            <button type="button" class="button" name="answer" id="option2" onclick="selectAnswer('')">Antwortmöglichkeit 2</button><br>
+            <button type="button" class="button" name="answer" id="option3" onclick="selectAnswer('')">Antwortmöglichkeit 3</button><br>
+            <button type="button" class="button" name="answer" id="option4" onclick="selectAnswer('')">Antwortmöglichkeit 4</button><br>
         </div>
 
         <div class="result" id="result"></div>
@@ -148,24 +148,24 @@
                 showResult(answer + ' gewählt');
             }
     
-            document.getElementById('surveyForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-                const data = { answer: selectedAnswer };
-                fetch('/submit', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-            });
+            // document.getElementById('surveyForm').addEventListener('submit', function(event) {
+            //     event.preventDefault();
+            //     const data = { answer: selectedAnswer };
+            //     fetch('/submit', {
+            //         method: 'POST',
+            //         headers: {
+            //             'Content-Type': 'application/json'
+            //         },
+            //         body: JSON.stringify(data)
+            //     })
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         console.log('Success:', data);
+            //     })
+            //     .catch((error) => {
+            //         console.error('Error:', error);
+            //     });
+            // });
 
         function loadDoc() {
             var xhttp = new XMLHttpRequest();
@@ -181,6 +181,32 @@
         function showResult(message) {
             document.getElementById('result').innerText = message;
         }
+
+        function getSurveyIDFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('surveyID');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const surveyID = getSurveyIDFromURL();
+            if (surveyID) {
+                fetch(`http://127.0.0.1:80/fragen/${surveyID}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            document.getElementById('frageText').innerText = data[0].Fragetext;
+                            const options = data[0].Antwortoptionen;
+                            if (options.length > 0) document.getElementById('option1').innerText = options[0].Optionstext;
+                            if (options.length > 1) document.getElementById('option2').innerText = options[1].Optionstext;
+                            if (options.length > 2) document.getElementById('option3').innerText = options[2].Optionstext;
+                            if (options.length > 3) document.getElementById('option4').innerText = options[3].Optionstext;
+                        }
+                    })
+                    .catch(error => console.error('Error fetching question:', error));
+            } else {
+                console.error('SurveyID not found in URL');
+            }
+        });
     </script>
 </body>
 </html>
