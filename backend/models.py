@@ -24,7 +24,7 @@ class Umfrage(db.Model):
     Status = db.Column(db.String(20))
     UserID = db.Column(db.Integer, db.ForeignKey('benutzer.UserID'))
 
-    fragen = db.relationship("Frage", backref="umfrage", lazy=True)
+    fragen = db.relationship("Frage", backref="umfrage", lazy=True, cascade="all, delete-orphan")
 
 class Frage(db.Model):
     __tablename__ = 'frage'
@@ -33,7 +33,7 @@ class Frage(db.Model):
     Reihenfolge = db.Column(db.Integer, nullable=True)
     SurveyID = db.Column(db.Integer, db.ForeignKey('umfrage.SurveyID'))
 
-    antwortoptionen = db.relationship("Antwortoption", backref="frage", lazy=True)
+    antwortoptionen = db.relationship("Antwortoption", backref="frage", lazy=True, cascade="all, delete-orphan")
 
 class Antwortoption(db.Model):
     __tablename__ = 'antwortoption'

@@ -150,3 +150,18 @@ def create_new_Survey():
 #         }
 #     ]
 # }
+#
+
+
+@routes.route('/deleteUmfrage/<int:survey_id>', methods=['DELETE'])
+def delete_umfrage(survey_id):
+    # Find the survey by SurveyID
+    survey = Umfrage.query.get(survey_id)
+    if not survey:
+        return jsonify({"message": "Survey not found"}), 404
+
+    # Delete the survey (questions and answer options will be deleted automatically)
+    db.session.delete(survey)
+    db.session.commit()
+
+    return jsonify({"message": "Survey and associated questions and answer options deleted successfully"}), 200
