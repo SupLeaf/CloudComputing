@@ -50,7 +50,7 @@
             padding: 100px 50px;
         }
 
-        #answer{
+        #answer1, #answer2, #answer3, #answer4 {
             background-color: #4CAF50;
             border: none;
             color: white;
@@ -82,35 +82,83 @@
 
     <form id="anfrageStellenHoffentlich" method="post">
         <div id="interface0">
+            <label for="titel">Titel:</label><br>
+            <input type="text" id="titel" name="titel" required><br><br>
+            <label for="beschreibung">Beschreibung:</label><br>
+            <input type="text" id="beschreibung" name="beschreibung" required><br><br>
+        </div>
+        <div id="interface0">
             <label for="question">Frage:</label><br>
-            <input type="text" id="question" name="question" required><br>
-            <input type="text" id="answer" name="answer1" required><br>
-            <input type="text" id="answer" name="answer2" required><br>
-            <input type="text" id="answer" name="answer3" required><br>
-            <input type="text" id="answer" name="answer4" required><br>
+            <input type="text" id="question" name="question" required><br><br>
+            <label for="answer1">Antwort 1:</label><br>
+            <input type="text" id="answer1" name="answer1" required><br><br>
+            <label for="answer2">Antwort 2:</label><br>
+            <input type="text" id="answer2" name="answer2" required><br><br>
+            <label for="answer3">Antwort 3:</label><br>
+            <input type="text" id="answer3" name="answer3" required><br><br>
+            <label for="answer4">Antwort 4:</label><br>
+            <input type="text" id="answer4" name="answer4" required><br><br>
             <input type="submit" value="Senden">
-
         </div>
     </form>
 
+    <div id="surveyIdDisplay" style="text-align: center; margin-top: 20px;"></div>
+
     <script> 
         document.getElementById('anfrageStellenHoffentlich').addEventListener('submit', function(event) {
-        event.preventDefault();
+            event.preventDefault();
 
-        var question = document.getElementById('question').value;
+            fetch('http://127.0.0.1:5000/getNewSurveyID')
+                .then(response => response.json())
+                .then(data => {
+                    var surveyId = data.new_survey_id;
+                    var titel = document.getElementById('titel').value;
+                    var beschreibung = document.getElementById('beschreibung').value;
+                    var question = document.getElementById('question').value;
+                    var answers = [
+                        document.getElementsByName('answer1')[0].value,
+                        document.getElementsByName('answer2')[0].value,
+                        document.getElementsByName('answer3')[0].value,
+                        document.getElementsByName('answer4')[0].value
+                    ];
 
-        fetch('10.0.2.16', { // http ip raussuchen und einfügen
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ question: question })
-        
-        }) 
-        .then(response => response.json()) 
-        .then(data => { document.getElementById('response').innerText = 'Antwort: ' + data.answer;
-     }) .catch(error => { console.error('Fehler:', error);
-      document.getElementById('response').innerText = 'Fehler beim Senden der Anfrage.';
-     }); 
-    });
+                    var surveyData = {
+                        SurveyID: surveyId,
+                        Titel: titel,
+                        Beschreibung: beschreibung,
+                        Status: "active",
+                        UserID: 1, // Assuming a static UserID for now
+                        Fragen: [
+                            {
+                                Fragetext: question,
+                                Reihenfolge: 1,
+                                Antwortoptionen: answers.map((answer, index) => ({
+                                    Optionstext: answer,
+                                    Reihenfolge: index + 1
+                                }))
+                            }
+                        ]
+                    };
+
+                    fetch('http://127.0.0.1:5000/neueUmfrage', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(surveyData)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('surveyIdDisplay').innerText = 'Umfrage erfolgreich erstellt! SurveyID: ' + surveyId;
+                    })
+                    .catch(error => {
+                        console.error('Fehler:', error);
+                        alert('Fehler beim Senden der Anfrage.');
+                    });
+                })
+                .catch(error => {
+                    console.error('Fehler beim Abrufen der SurveyID:', error);
+                    alert('Fehler beim Abrufen der SurveyID.');
+                });
+        });
     </script>
 </body>
 </html>

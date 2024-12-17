@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_cors import CORS
 from models import db, Umfrage, Frage, Antwort, Antwortoption
 from schemas import UmfrageSchema, FrageSchema
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 
 routes = Blueprint("routes", __name__)
@@ -88,8 +88,8 @@ def create_new_Survey():
         Titel=data['Titel'],
         Beschreibung=data['Beschreibung'],
         Erstellungsdatum=datetime.now(),
-        Startdatum=data['Startdatum'],
-        Enddatum=data['Enddatum'],
+        Startdatum=datetime.now(),
+        Enddatum=datetime.now() + timedelta(days=365),
         Status=data['Status'],
         UserID=data['UserID']
     )
@@ -124,8 +124,6 @@ def create_new_Survey():
 #     "SurveyID": 1,
 #     "Titel": "Lieblingsfarbe Umfrage",
 #     "Beschreibung": "Eine Umfrage über Lieblingsfarben",
-#     "Startdatum": "2024-11-28T00:00:00",
-#     "Enddatum": "2024-12-28T00:00:00",
 #     "Status": "active",
 #     "UserID": 1,
 #     "Fragen": [
