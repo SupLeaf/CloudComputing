@@ -1,10 +1,12 @@
 from flask import Flask
+from flask_cors import CORS
 from models import db
 from schemas import ma
 from routes import routes
 from config import Config
 
 app = Flask(__name__)
+CORS(app)  # Add this line
 app.config.from_object(Config)
 
 db.init_app(app)

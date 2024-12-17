@@ -53,7 +53,11 @@ def post_antwort():
     db.session.add(antwort)
     db.session.commit()
 
-    return jsonify({"message": "Antwort gespeichert!"}), 201
+    response = jsonify({"message": "Antwort gespeichert!"})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+    response.headers.add("Access-Control-Allow-Methods", "POST")
+    return response, 201
 
 
 #Fragt die Datenbank nach einer neuen uniquen SurveyID
