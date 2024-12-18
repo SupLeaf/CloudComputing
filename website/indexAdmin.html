@@ -108,7 +108,7 @@
         document.getElementById('anfrageStellenHoffentlich').addEventListener('submit', function(event) {
             event.preventDefault();
 
-            fetch('http://127.0.0.1:5000/getNewSurveyID')
+            fetch('/api/getNewSurveyID')
                 .then(response => response.json())
                 .then(data => {
                     var surveyId = data.new_survey_id;
@@ -140,7 +140,7 @@
                         ]
                     };
 
-                    fetch('http://127.0.0.1:5000/neueUmfrage', {
+                    fetch('/api/neueUmfrage', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(surveyData)
