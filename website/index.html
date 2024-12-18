@@ -58,11 +58,11 @@
 
         function loadHeaderAndRedirect(role) {
             if (role === "user") {   // Seite Für den User (erstmalig)
-                fetch('indexUser.html')
+                fetch('indexWeiterleiten.html')
                     .then(response => response.text())
                     .then(html => {
                         setTimeout(() => {
-                            window.location.href = "indexUser.html";
+                            window.location.href = "indexWeiterleiten.html";
                         }, null); // Optionale Verzögerung vor Weiterleitung
                     })
                     .catch(err => console.error('Fehler beim Laden der Seite:', err));
