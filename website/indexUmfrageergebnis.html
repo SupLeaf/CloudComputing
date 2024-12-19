@@ -167,7 +167,7 @@
         document.addEventListener('DOMContentLoaded', function() {
                     const surveyId = getSurveyidFromURL();
                     if (surveyId) {
-                        fetch(`http://localhost:80/ergebnisse-kumulativ/${surveyId}`)
+                        fetch(`/api/ergebnisse-kumulativ/${surveyId}`)
                             .then(response => response.json())
                             .then(data => {
                                 const surveyResults = document.getElementById('survey-results');
