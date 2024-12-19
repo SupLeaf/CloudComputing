@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Umfrageergebnisse</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #333;
+        padding: 10px 20px;
+    }
+    .header img {
+        height: 50px;
+    }
+
+    h1{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .nav {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    .nav li {
+        margin-left: 20px;
+    }
+    .nav a {
+        color: white;
+        text-decoration: none;
+        padding: 10px 15px;
+        display: block;
+    }
+    .nav a:hover {
+        background-color: #575757;
+    }
+
+    .result {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+        font-size: 20px;
+        color: rgb(47, 53, 47);
+    }
+
+    #fragen {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: center;
+        color: blue;
+        padding: 10px 15px;
+    }
+
+    .button {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+
+    .button:hover {
+        background-color: #45a049;
+    }
+
+    .subButton:hover{
+        background-color: lightskyblue;
+    }
+
+    .subButton{
+        align-content: center;
+    }
+
+    .question {
+                    margin-bottom: 20px;
+                }
+                .option {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 10px;
+                }
+                .option .bar {
+                    height: 20px;
+                    background-color: #4CAF50;
+                    margin-left: 10px;
+                    color: white;
+                    text-align: center;
+                }
+</style>
+<body>
+
+
+    <header class="header">
+        <a href="index.html">
+            <img src="logo.png" alt="Logo">
+        </a>
+        <nav>
+            <ul class="nav">
+                <li><a href="index.html" onclick="changeDoc()">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h1>Ergebnisse der Umfrage</h1>
+    <div id="fragen">
+        <div class="result" id="result">
+            <div id="survey-results"></div>
+        </div>
+
+
+
+   <div class="bubbles">
+        <span class="one"></span>
+        <span class="two"></span>
+        <span class="three"></span>
+        <span class="four"></span>
+        <span class="five"></span>
+        <span class="six"></span>
+        <span class="seven"></span>
+    </div>
+
+    <script>
+
+        function loadDoc() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+              if (this.readyState == 4 && this.status == 200) {
+               document.getElementByLink("#home").innerHTML = this.responseText;
+              }
+            }
+            xhttp.open("GET", "try1.txt", true);
+            xhttp.send();
+          }
+
+        function showResult(message) {
+            document.getElementById('result').innerText = message;
+        }
+
+        function getSurveyidFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('surveyid');
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+                    const surveyId = getSurveyidFromURL();
+                    if (surveyId) {
+                        fetch(`http://localhost:80/ergebnisse-kumulativ/${surveyId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const surveyResults = document.getElementById('survey-results');
+                                data.forEach(question => {
+                                    const questionDiv = document.createElement('div');
+                                    questionDiv.classList.add('question');
+                                    questionDiv.innerHTML = `<h2>${question.Fragetext}</h2>`;
+                                    question.Antwortoptionen.forEach(option => {
+                                        const optionDiv = document.createElement('div');
+                                        optionDiv.classList.add('option');
+                                        optionDiv.innerHTML = `
+                                            <span>${option.Optionstext}</span>
+                                            <div class="bar" style="width: ${option.Anzahl * 10}px;">${option.Anzahl}</div>
+                                        `;
+                                        questionDiv.appendChild(optionDiv);
+                                    });
+                                    surveyResults.appendChild(questionDiv);
+                                });
+                            })
+                            .catch(error => console.error('Error fetching survey results:', error));
+                    } else {
+                        showResult('Survey ID not found in URL.');
+                    }
+                });
+    </script>
+</body>
+</html>
