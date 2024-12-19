@@ -59,6 +59,65 @@ def post_antwort():
     response.headers.add("Access-Control-Allow-Methods", "POST")
     return response, 201
 
+#Gibt die Ergebnisse einer Umfrage zurück
+@routes.route('/ergebnisse/<int:survey_id>', methods=['GET'])   
+def get_ergebnisse(survey_id):
+    results = db.session.query(
+        Antwort.ResponseID,
+        Antwort.Antwortdatum,
+        Antwort.QuestionID,
+        Frage.Fragetext,
+        Antwort.OptionID,
+        Antwortoption.Optionstext
+    ).join(Frage, Antwort.QuestionID == Frage.QuestionID
+    ).outerjoin(Antwortoption, Antwort.OptionID == Antwortoption.OptionID
+    ).filter(Antwort.SurveyID == survey_id
+    ).order_by(Antwort.Antwortdatum).all()
+
+    response = []
+    for result in results:
+        response.append({
+            'ResponseID': result.ResponseID,
+            'Antwortdatum': result.Antwortdatum,
+            'QuestionID': result.QuestionID,
+            'Fragetext': result.Fragetext,
+            'OptionID': result.OptionID,
+            'Optionstext': result.Optionstext
+        })
+
+    return jsonify(response)    
+
+#Gibt die zusammengezählten Antworten auf jede Frage einer Umfrage zurück. 
+@routes.route('/ergebnisse-kumulativ/<int:survey_id>', methods=['GET'])
+def get_kumulativ_ergebnisse(survey_id):
+    results = db.session.query(
+        Antwort.QuestionID,
+        Frage.Fragetext,
+        Antwort.OptionID,
+        Antwortoption.Optionstext,
+        db.func.count(Antwort.OptionID).label('Anzahl')
+    ).join(Frage, Antwort.QuestionID == Frage.QuestionID
+    ).outerjoin(Antwortoption, Antwort.OptionID == Antwortoption.OptionID
+    ).filter(Antwort.SurveyID == survey_id
+    ).group_by(Antwort.QuestionID, Antwort.OptionID
+    ).order_by(Antwort.QuestionID, Antwort.OptionID).all()
+    response = []
+    current_question_id = None
+    for result in results:
+        if result.QuestionID != current_question_id:
+            current_question_id = result.QuestionID
+            response.append({
+                'QuestionID': result.QuestionID,
+                'Fragetext': result.Fragetext,
+                'Antwortoptionen': []
+            })
+        response[-1]['Antwortoptionen'].append({
+            'OptionID': result.OptionID,
+            'Optionstext': result.Optionstext,
+            'Anzahl': result.Anzahl
+        })
+
+    return jsonify(response)
 
 #Fragt die Datenbank nach einer neuen uniquen SurveyID
 #ACHTUNG: Reserviert noch kein Objekt in der Datenbank, da dafür ganze Umfrage angelegt werden muss
