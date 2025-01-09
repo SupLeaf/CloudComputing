@@ -10,7 +10,11 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            min-height: 150vh;
+            display: flex;
+            flex-direction: column;
         }
+
         .header {
             display: flex;
             align-items: center;
@@ -20,6 +24,11 @@
         }
         .header img {
             height: 50px;
+        }
+        h1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .nav {
             display: flex;
@@ -39,18 +48,19 @@
         .nav a:hover {
             background-color: #575757;
         }
-
-        #interface0{
+        .container {
             display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            margin: center;
-            color: blue;
-            padding: 100px 50px;
+            flex-direction: column;
+            min-height: 100vh;
         }
-
-        #answer1, #answer2, #answer3, #answer4 {
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .button {
             background-color: #4CAF50;
             border: none;
             color: white;
@@ -62,49 +72,82 @@
             margin: 4px 2px;
             cursor: pointer;
         }
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 600px;
+        }
+        form div {
+            margin-bottom: 15px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .header, .footer {
+                padding: 5px 0;
+            }
+            .nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav li {
+                margin-bottom: 10px;
+            }
+        }
     </style>
 </head>
 <body>
-    <header class="header">
-        <a href="index.html">
-            <img src="logo.png" alt="Logo">
-        </a>
-        <nav>   <!-- Header home funktoniert (contact muss noch gefragt werden)-->
-            <ul class="nav">
-                <li><a href="index.html" onclick="changeDoc()">Home</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-
-<div id="Interface">
-    <form id="anfrageStellenHoffentlich" method="post">
-        <div id="interface0">
-            <label for="titel">Titel:</label><br>
-            <input type="text" id="titel" name="titel" required><br><br>
-            <label for="beschreibung">Beschreibung:</label><br>
-            <input type="text" id="beschreibung" name="beschreibung" required><br><br>
+    <div class="container">
+        <div class="header">
+            <a href="index.html">
+                <img src="logo.png" alt="Logo">
+            </a>
+            <nav>
+                <ul class="nav">
+                    <li><a href="index.html" onclick="changeDoc()">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
         </div>
-        <div id="interface0">
-            <label for="question">Frage:</label><br>
-            <input type="text" id="question" name="question" required><br><br>
-            <label for="answer1">Antwort 1:</label><br>
-            <input type="text" id="answer1" name="answer1" required><br><br>
-            <label for="answer2">Antwort 2:</label><br>
-            <input type="text" id="answer2" name="answer2" required><br><br>
-            <label for="answer3">Antwort 3:</label><br>
-            <input type="text" id="answer3" name="answer3" required><br><br>
-            <label for="answer4">Antwort 4:</label><br>
-            <input type="text" id="answer4" name="answer4" required><br><br>
-            <input type="submit" value="Senden">
+        <div class="content">
+            <div id="Interface">
+                <form id="anfrageStellenHoffentlich" method="post">
+                    <div id="interface0">
+                        <label for="titel">Titel:</label><br>
+                        <input type="text" id="titel" name="titel" required><br><br>
+                        <label for="beschreibung">Beschreibung:</label><br>
+                        <input type="text" id="beschreibung" name="beschreibung" required><br><br>
+                    </div>
+                    <div id="interface0">
+                        <label for="question">Frage:</label><br>
+                        <input type="text" id="question" name="question" required><br><br>
+                        <label for="answer1">Antwort 1:</label><br>
+                        <input type="text" id="answer1" name="answer1" required><br><br>
+                        <label for="answer2">Antwort 2:</label><br>
+                        <input type="text" id="answer2" name="answer2" required><br><br>
+                        <label for="answer3">Antwort 3:</label><br>
+                        <input type="text" id="answer3" name="answer3" required><br><br>
+                        <label for="answer4">Antwort 4:</label><br>
+                        <input type="text" id="answer4" name="answer4" required><br><br>
+                        <input type="submit" value="Senden">
+                    </div>
+                </form>
+                <div id="surveyIdDisplay" style="text-align: center; margin-top: 20px;"></div>
+            
+                <div id="redirectButton" style="display: none;">
+                    <button type="button" class="button" onclick="redirectToResults()">Ergebnisse anzeigen</button>
+                </div>
+            </div>
         </div>
-    </form>
-
-    <div id="surveyIdDisplay" style="text-align: center; margin-top: 20px;"></div>
-</div>
-    <script> 
+        <div class="footer">
+            <p>&copy; 2025 MAKK´s - Survey</p>
+        </div>
+    </div>
+    <script>
         document.getElementById('anfrageStellenHoffentlich').addEventListener('submit', function(event) {
             event.preventDefault();
 
@@ -112,6 +155,8 @@
                 .then(response => response.json())
                 .then(data => {
                     var surveyId = data.new_survey_id;
+                    document.getElementById('surveyIdDisplay').innerText = 'Neue SurveyID: ' + surveyId;
+
                     var titel = document.getElementById('titel').value;
                     var beschreibung = document.getElementById('beschreibung').value;
                     var question = document.getElementById('question').value;
@@ -134,8 +179,8 @@
                                 Reihenfolge: 1,
                                 Antwortoptionen: answers.map((answer, index) => ({
                                     Optionstext: answer,
-                                    Reihenfolge: index + 1
-                                }))
+                            Reihenfolge: index + 1
+                        }))
                             }
                         ]
                     };
@@ -148,6 +193,7 @@
                     .then(response => response.json())
                     .then(data => {
                         document.getElementById('surveyIdDisplay').innerText = 'Umfrage erfolgreich erstellt! SurveyID: ' + surveyId;
+                        document.getElementById('redirectButton').style.display = 'inline-block';
                     })
                     .catch(error => {
                         console.error('Fehler:', error);
@@ -159,6 +205,11 @@
                     alert('Fehler beim Abrufen der SurveyID.');
                 });
         });
+
+        function redirectToResults() {
+            const surveyId = document.getElementById('surveyIdDisplay').innerText.split(' ').pop();
+            window.location.href = `/indexUmfrageergebnis.html?surveyid=${surveyId}`;
+        }   
     </script>
 </body>
 </html>

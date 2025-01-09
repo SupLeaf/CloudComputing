@@ -65,7 +65,7 @@
         padding: 10px 15px;
     }
 
-    .button {
+    .button, #surveyForm input[type="submit"]  {
         background-color: #4CAF50;
         border: none;
         color: white;
@@ -116,12 +116,14 @@
             <button type="button" class="button" name="answer" id="option4" onclick="selectAnswer(this.getAttribute('data-optionid') || '4')">Antwortmöglichkeit 4</button><br>
         </div>
         <div class="result" id="result"></div>
-        <div id="subButton">
+        <div id="subButton" style="text-align: center;">
             <input type="submit" value="Send" />
         </div>
     </form>
 
-
+    <div id="redirectButton" style="text-align: center;">
+        <button type="button" class="button" onclick="redirectToResults()">Ergebnisse anzeigen</button>
+    </div>
 
    <div class="bubbles">
         <span class="one"></span>
@@ -253,6 +255,16 @@
                 showResult('Fehler beim Speichern der Antwort.');
             });
         });
+
+        function redirectToResults() {
+            const surveyid = getSurveyidFromURL();
+            if (surveyid) {
+                window.location.href = `indexUmfrageergebnis.html?surveyid=${surveyid}`;
+            } else {
+                console.error('Surveyid not found in URL');
+                showResult('Surveyid not found in URL');
+            }
+        }
     </script>
 </body>
 </html>
