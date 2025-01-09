@@ -94,29 +94,38 @@
     </div>
 
     <script>
+        let validSurveyIDs = []; // Gültige Survey IDs
+
+        function fetchSurveyIDs() {
+            fetch('/api/umfragen')
+                .then(response => response.json())
+                .then(data => {
+                    validSurveyIDs = data.map(survey => survey.SurveyID);
+                })
+                .catch(error => console.error('Error fetching SurveyIDs:', error));
+        }
+        // Fetch SurveyIDs when the page loads
+        document.addEventListener('DOMContentLoaded', fetchSurveyIDs);
+
+
 
         function checkSurveyID(surveyID) {
-            if (!surveyID.includes(surveyID)) {
-                // Display a pop-up window if the survey ID is not found
-                alert('Survey ID not found. Please check and try again.');
-            } else {
-                // Proceed with the survey
-                console.log('Survey ID found. Proceeding with the survey...');
-            }
+            return validSurveyIDs.includes(surveyID);
         }
-
-
-
-
 
         function redirectToUser(event) {
             event.preventDefault();
-            const surveyID = document.querySelector('input[name="surveyID"]').value;
-            checkSurveyID(SurveyID);
-            window.location.href = `indexUser.html?surveyid=${surveyID}`;
-            
+            let surveyID = parseInt(document.querySelector('input[name="surveyID"]').value, 10);
+            console.log(surveyID);
+            if (checkSurveyID(surveyID)) {
+                window.location.href = `indexUser.html?surveyid=${surveyID}`;
+            } else {
+                alert('Survey ID not found. Please check and try again.');
+            }
         }
+
         document.getElementById('surveyForm').addEventListener('submit', redirectToUser);
     </script>
 
 </body>
+</html>
